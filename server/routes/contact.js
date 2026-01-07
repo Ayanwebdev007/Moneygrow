@@ -5,14 +5,14 @@ const ContactMessage = require('../models/ContactMessage');
 // POST /api/contact
 router.post('/', async (req, res) => {
     try {
-        const { name, email, subject, message } = req.body;
+        const { name, email, phone, subject, message } = req.body;
 
         // Basic validation
-        if (!name || !email || !subject || !message) {
-            return res.status(400).json({ error: 'All fields are required' });
+        if (!name || !phone || !subject || !message) {
+            return res.status(400).json({ error: 'All fields except email are required' });
         }
 
-        const newContact = new ContactMessage({ name, email, subject, message });
+        const newContact = new ContactMessage({ name, email, phone, subject, message });
         await newContact.save();
         res.status(201).json({ message: 'Message sent successfully' });
     } catch (error) {
