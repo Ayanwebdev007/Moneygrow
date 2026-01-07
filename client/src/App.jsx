@@ -12,6 +12,9 @@ import Privacy from './pages/Privacy';
 import Disclaimer from './pages/Disclaimer';
 
 import HowItWorks from './pages/HowItWorks';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminPrivateRoute from './components/AdminPrivateRoute';
 
 export default function App() {
   return (
@@ -28,6 +31,14 @@ export default function App() {
         <Route path="privacy" element={<Privacy />} />
         <Route path="disclaimer" element={<Disclaimer />} />
       </Route>
+
+      {/* Admin Routes (Separate from visitor Layout) */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={
+        <AdminPrivateRoute>
+          <AdminDashboard />
+        </AdminPrivateRoute>
+      } />
     </Routes>
   );
 }
