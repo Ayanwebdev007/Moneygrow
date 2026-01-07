@@ -1,10 +1,11 @@
-services:
-  # Backend API Service (Web Service)
-  - type: web
-    name: moneygrow-api
+# Render Blueprint
+# We use specific service tokens (webServices, staticSites) instead of the generic 'services' list.
+
+webServices:
+  - name: moneygrow-api
     runtime: node
     region: singapore
-    root: server
+    rootDir: server # Changed from 'root' to 'rootDir'
     buildCommand: npm install
     startCommand: node index.js
     plan: free
@@ -14,13 +15,12 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        sync: false # User will input this securely
+        sync: false
 
-# Frontend Static Site (Must be under staticSites, not services)
 staticSites:
   - name: moneygrow-frontend
     region: singapore
-    root: client
+    rootDir: client # Changed from 'root' to 'rootDir'
     buildCommand: npm install && npm run build
     publishDir: dist
     plan: free
