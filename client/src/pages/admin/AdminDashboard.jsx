@@ -189,36 +189,38 @@ const AdminDashboard = () => {
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100">
             {/* Sidebar */}
             <aside className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 shadow-sm ${isSidebarExpanded ? 'w-64' : 'w-20'}`}>
-                <div className="p-4 lg:p-6 h-full flex flex-col relative">
+                <div className={`h-full flex flex-col items-center ${isSidebarExpanded ? 'p-6 items-stretch' : 'py-6 px-2'} relative`}>
                     {/* Toggle Button */}
                     <button
                         onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-                        className="absolute -right-3 top-20 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 shadow-sm z-[60] transition-transform hover:scale-110"
+                        className="absolute -right-3 top-10 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 shadow-sm z-[60] transition-transform hover:scale-110"
                     >
                         {isSidebarExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                     </button>
 
-                    <div className="flex items-center gap-3 mb-10 overflow-hidden">
+                    <div className={`flex items-center ${isSidebarExpanded ? 'gap-3 mb-10' : 'justify-center mb-12'} w-full overflow-hidden`}>
                         <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
                             <ArrowUpRight className="text-white w-6 h-6" />
                         </div>
                         {isSidebarExpanded && <span className="text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap animate-in fade-in slide-in-from-left-2">Money Grow</span>}
                     </div>
 
-                    <nav className="space-y-1.5 flex-grow">
+                    <nav className="space-y-3 flex-grow w-full">
                         {isSidebarExpanded && <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-4 px-4">Main Menu</p>}
-                        <button className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 bg-emerald-50 text-emerald-700 rounded-xl font-semibold transition-all group`}>
-                            <Users className="w-5 h-5" />
+                        <button className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 bg-emerald-50 text-emerald-700 rounded-xl font-semibold transition-all group relative`}>
+                            <Users className="w-5 h-5 shrink-0" />
                             {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">Inquiries</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Inquiries</div>}
                         </button>
-                        <button disabled className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 text-slate-400 rounded-xl font-medium cursor-not-allowed opacity-60`}>
-                            <LayoutDashboard className="w-5 h-5" />
+                        <button disabled className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 text-slate-300 rounded-xl font-medium cursor-not-allowed group relative`}>
+                            <LayoutDashboard className="w-5 h-5 shrink-0" />
                             {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">App Users</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Coming Soon</div>}
                         </button>
                     </nav>
 
-                    <div className="mt-auto pt-6 border-t border-slate-100 space-y-4">
-                        {isSidebarExpanded && (
+                    <div className="mt-auto pt-6 border-t border-slate-100 space-y-4 w-full">
+                        {isSidebarExpanded ? (
                             <div className="flex items-center gap-3 px-2 hidden lg:flex animate-in fade-in slide-in-from-bottom-2">
                                 <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase">
                                     {adminUser.name?.charAt(0)}
@@ -228,13 +230,21 @@ const AdminDashboard = () => {
                                     <p className="text-[10px] text-slate-400 font-medium">Administrator</p>
                                 </div>
                             </div>
+                        ) : (
+                            <div className="flex justify-center group relative">
+                                <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase">
+                                    {adminUser.name?.charAt(0)}
+                                </div>
+                                <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Profile</div>
+                            </div>
                         )}
                         <button
                             onClick={handleLogout}
-                            className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-semibold transition-all group`}
+                            className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-semibold transition-all group relative`}
                         >
-                            <LogOut className="w-5 h-5" />
+                            <LogOut className="w-5 h-5 shrink-0" />
                             {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">Logout</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-red-600 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Logout</div>}
                         </button>
                     </div>
                 </div>
