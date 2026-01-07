@@ -19,7 +19,9 @@ import {
     MessageCircle,
     LayoutDashboard,
     ChevronLeft,
-    Menu
+    Menu,
+    Briefcase,
+    TrendingUp
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,6 +36,9 @@ const AdminDashboard = () => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+    const [activeSection, setActiveSection] = useState('inquiries');
+    const [investors, setInvestors] = useState([]);
+    const [plans, setPlans] = useState([]);
     const navigate = useNavigate();
 
     const fetchContacts = async () => {
@@ -46,18 +51,9 @@ const AdminDashboard = () => {
             if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
 
             const response = await fetch(`${apiUrl}/api/admin/contacts`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    handleLogout();
-                }
-                throw new Error('Failed to fetch contact data');
-            }
-
+            if (!response.ok) throw new Error('Failed to fetch lead data');
             const data = await response.json();
             setContacts(data);
         } catch (err) {
@@ -67,9 +63,55 @@ const AdminDashboard = () => {
         }
     };
 
+    const fetchInvestors = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('adminToken');
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) apiUrl = `${apiUrl}.onrender.com`;
+            if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
+
+            const response = await fetch(`${apiUrl}/api/admin/investors`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch investors');
+            const data = await response.json();
+            setInvestors(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchPlans = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('adminToken');
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) apiUrl = `${apiUrl}.onrender.com`;
+            if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
+
+            const response = await fetch(`${apiUrl}/api/plans/admin`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch plans');
+            const data = await response.json();
+            setPlans(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        fetchContacts();
-    }, []);
+        if (activeSection === 'inquiries') fetchContacts();
+        if (activeSection === 'investors') fetchInvestors();
+        if (activeSection === 'plans') fetchPlans();
+    }, [activeSection]);
 
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
@@ -207,15 +249,31 @@ const AdminDashboard = () => {
 
                     <nav className="space-y-3 flex-grow w-full">
                         {isSidebarExpanded && <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-4 px-4">Main Menu</p>}
-                        <button className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 bg-emerald-50 text-emerald-700 rounded-xl font-semibold transition-all group relative`}>
-                            <Users className="w-5 h-5 shrink-0" />
-                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">Inquiries</span>}
-                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Inquiries</div>}
+                        <button
+                            onClick={() => setActiveSection('inquiries')}
+                            className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 ${activeSection === 'inquiries' ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50'} rounded-xl font-semibold transition-all group relative`}
+                        >
+                            <MessageSquare className="w-5 h-5 shrink-0" />
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2 transition-all">Leads</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-[70]">Leads</div>}
                         </button>
-                        <button disabled className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 text-slate-300 rounded-xl font-medium cursor-not-allowed group relative`}>
-                            <LayoutDashboard className="w-5 h-5 shrink-0" />
-                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">App Users</span>}
-                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">Coming Soon</div>}
+
+                        <button
+                            onClick={() => setActiveSection('investors')}
+                            className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 ${activeSection === 'investors' ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50'} rounded-xl font-semibold transition-all group relative`}
+                        >
+                            <Users className="w-5 h-5 shrink-0" />
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2 transition-all">Investors</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-[70]">Investors</div>}
+                        </button>
+
+                        <button
+                            onClick={() => setActiveSection('plans')}
+                            className={`w-full flex items-center ${isSidebarExpanded ? 'justify-start px-4' : 'justify-center'} py-2.5 ${activeSection === 'plans' ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50'} rounded-xl font-semibold transition-all group relative`}
+                        >
+                            <TrendingUp className="w-5 h-5 shrink-0" />
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2 transition-all">Investment Plans</span>}
+                            {!isSidebarExpanded && <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-[70]">Investment Plans</div>}
                         </button>
                     </nav>
 
