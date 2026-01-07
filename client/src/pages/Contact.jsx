@@ -19,7 +19,10 @@ export default function Contact() {
         e.preventDefault();
         setStatus('loading');
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            if (!apiUrl.startsWith('http')) {
+                apiUrl = `https://${apiUrl}`;
+            }
             const response = await fetch(`${apiUrl}/api/contact`, {
                 method: 'POST',
                 headers: {
