@@ -39,6 +39,15 @@ const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState('inquiries');
     const [investors, setInvestors] = useState([]);
     const [plans, setPlans] = useState([]);
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+    const [planForm, setPlanForm] = useState({
+        name: '',
+        type: 'monthly',
+        profitPercentage: 0,
+        durationDays: 30,
+        minAmount: 1000,
+        description: ''
+    });
     const navigate = useNavigate();
 
     const fetchContacts = async () => {
@@ -211,6 +220,61 @@ const AdminDashboard = () => {
         }
     };
 
+    const toggleSelectOne = (id) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
+
+    const handleSavePlan = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('adminToken');
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) apiUrl = `${apiUrl}.onrender.com`;
+            if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
+
+            const response = await fetch(`${apiUrl}/api/plans`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(planForm)
+            });
+
+            if (!response.ok) throw new Error('Failed to save plan');
+
+            setIsPlanModalOpen(false);
+            fetchPlans();
+            setPlanForm({ name: '', type: 'monthly', profitPercentage: 0, durationDays: 30, minAmount: 1000, description: '' });
+            alert('Investment Plan created successfully');
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const handleDeletePlan = async (id) => {
+        if (!window.confirm('Delete this plan? Users will no longer be able to invest in it.')) return;
+        try {
+            const token = localStorage.getItem('adminToken');
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) apiUrl = `${apiUrl}.onrender.com`;
+            if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
+
+            const response = await fetch(`${apiUrl}/api/plans/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to delete');
+            fetchPlans();
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
     const toggleSelectAll = () => {
         if (selectedIds.length === filteredContacts.length) {
             setSelectedIds([]);
@@ -219,11 +283,226 @@ const AdminDashboard = () => {
         }
     };
 
-    const toggleSelectOne = (id) => {
-        setSelectedIds(prev =>
-            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-        );
-    };
+    const renderInquiries = () => (
+        <>
+            {/* Stats Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Total Leads</p>
+                    <div className="flex items-end justify-between">
+                        <h3 className="text-2xl font-bold text-slate-900">{contacts.length}</h3>
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            <Users className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Data Table Section */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-4 lg:p-5 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full md:w-80">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search leads..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2.5 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 outline-none transition-all text-sm"
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <select
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-widest outline-none"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(e.target.value)}
+                        >
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] uppercase tracking-widest text-slate-400">
+                                <th className="pl-6 py-4 w-10">
+                                    <input
+                                        type="checkbox"
+                                        checked={filteredContacts.length > 0 && selectedIds.length === filteredContacts.length}
+                                        onChange={toggleSelectAll}
+                                        className="w-4 h-4 rounded border-slate-300 text-emerald-600"
+                                    />
+                                </th>
+                                <th className="px-6 py-4 font-bold">Name</th>
+                                <th className="px-6 py-4 font-bold">Phone</th>
+                                <th className="px-6 py-4 font-bold">Date</th>
+                                <th className="px-6 py-4 font-bold">Message</th>
+                                <th className="px-6 py-4 font-bold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50 text-[13px]">
+                            {loading ? (
+                                <tr><td colSpan="6" className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500 mx-auto" /></td></tr>
+                            ) : filteredContacts.length === 0 ? (
+                                <tr><td colSpan="6" className="py-20 text-center text-slate-400">No leads found</td></tr>
+                            ) : (
+                                filteredContacts.map((contact) => (
+                                    <tr key={contact._id} className="hover:bg-slate-50/80 group">
+                                        <td className="pl-6 py-4">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIds.includes(contact._id)}
+                                                onChange={() => toggleSelectOne(contact._id)}
+                                                className="w-4 h-4 rounded border-slate-300 text-emerald-600"
+                                            />
+                                        </td>
+                                        <td className="px-6 py-4 font-bold text-slate-700">{contact.name}</td>
+                                        <td className="px-6 py-4 text-slate-600">{contact.phone}</td>
+                                        <td className="px-6 py-4 text-slate-500">
+                                            {new Date(contact.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-400 truncate max-w-[200px]">{contact.message}</td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button onClick={() => openModal(contact)} className="text-emerald-600 font-bold hover:bg-emerald-50 px-3 py-1.5 rounded-lg transition-all">View</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </>
+    );
+
+    const renderInvestors = () => (
+        <>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Total App Users</p>
+                    <div className="flex items-end justify-between">
+                        <h3 className="text-2xl font-bold text-slate-900">{investors.length}</h3>
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            <Users className="w-4 h-4" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-4 lg:p-5 border-b border-slate-100">
+                    <div className="relative w-full md:w-80">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search investors..."
+                            className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2.5 rounded-xl outline-none text-sm"
+                        />
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] uppercase tracking-widest text-slate-400">
+                                <th className="px-6 py-4 font-bold">Investor Name</th>
+                                <th className="px-6 py-4 font-bold">Phone Number</th>
+                                <th className="px-6 py-4 font-bold">KYC Status</th>
+                                <th className="px-6 py-4 font-bold">Joined</th>
+                                <th className="px-6 py-4 font-bold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50 text-[13px]">
+                            {loading ? (
+                                <tr><td colSpan="5" className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500 mx-auto" /></td></tr>
+                            ) : investors.length === 0 ? (
+                                <tr><td colSpan="5" className="py-20 text-center text-slate-400">No registered app users yet</td></tr>
+                            ) : (
+                                investors.map((inv) => (
+                                    <tr key={inv._id} className="hover:bg-slate-50/80">
+                                        <td className="px-6 py-4 font-bold text-slate-700">{inv.name}</td>
+                                        <td className="px-6 py-4 text-slate-600 font-medium">{inv.phone}</td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${inv.kycStatus === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                                                inv.kycStatus === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'
+                                                }`}>
+                                                {inv.kycStatus || 'Not Started'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-500">{new Date(inv.createdAt).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button className="text-slate-400 hover:text-emerald-600 font-bold px-3 py-1.5 rounded-lg">Details</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </>
+    );
+
+    const renderPlans = () => (
+        <>
+            <div className="flex justify-between items-center mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow mr-4">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Active Plans</p>
+                        <h3 className="text-2xl font-bold text-slate-900">{plans.length}</h3>
+                    </div>
+                </div>
+                <button
+                    onClick={() => setIsPlanModalOpen(true)}
+                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:scale-105 transition-transform"
+                >
+                    <Briefcase className="w-5 h-5" />
+                    <span>Create New Plan</span>
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {plans.length === 0 ? (
+                    <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-slate-200 rounded-3xl">
+                        <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-10" />
+                        <p className="text-slate-400 font-medium">No investment plans created yet</p>
+                    </div>
+                ) : (
+                    plans.map(plan => (
+                        <div key={plan._id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${plan.type === 'daily' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                                    }`}>
+                                    {plan.type}
+                                </div>
+                                <button
+                                    onClick={() => handleDeletePlan(plan._id)}
+                                    className="p-1.5 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-900 mb-1">{plan.name}</h4>
+                            <p className="text-slate-500 text-xs mb-6 h-8 line-clamp-2">{plan.description}</p>
+
+                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-50">
+                                <div>
+                                    <p className="text-[10px] uppercase font-bold text-slate-400">Profit</p>
+                                    <p className="text-xl font-black text-emerald-600">{plan.profitPercentage}%</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] uppercase font-bold text-slate-400">Duration</p>
+                                    <p className="text-sm font-bold text-slate-700">{plan.durationDays} Days</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        </>
+    );
 
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
 
@@ -317,8 +596,14 @@ const AdminDashboard = () => {
                             <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                             <span className="text-[10px] uppercase tracking-widest font-black text-emerald-600">Admin Live</span>
                         </div>
-                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Contact Inquiries</h1>
-                        <p className="text-slate-500 text-xs mt-1">Manage and respond to visitor messages</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
+                            {activeSection === 'inquiries' ? 'Contact Inquiries' :
+                                activeSection === 'investors' ? 'Equity Investors' : 'Investment Plans'}
+                        </h1>
+                        <p className="text-slate-500 text-xs mt-1">
+                            {activeSection === 'inquiries' ? 'Manage and respond to visitor messages' :
+                                activeSection === 'investors' ? 'Manage registered app users' : 'Create and manage dynamic investment offerings'}
+                        </p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -350,134 +635,9 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Stats Summary */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Total Leads</p>
-                        <div className="flex items-end justify-between">
-                            <h3 className="text-2xl font-bold text-slate-900">{contacts.length}</h3>
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                                <Users className="w-4 h-4" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Data Table Section */}
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                    {/* Controls */}
-                    <div className="p-4 lg:p-5 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative w-full md:w-80">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Quick search..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-10 pr-4 py-2.5 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 outline-none transition-all text-sm"
-                            />
-                        </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                            <div className="relative flex-1 md:flex-none">
-                                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                                <select
-                                    className="w-full bg-slate-50 text-slate-600 border border-slate-200 rounded-xl pl-9 pr-6 py-2.5 transition-all text-xs font-bold uppercase tracking-widest appearance-none cursor-pointer outline-none hover:border-slate-300"
-                                    value={sortOrder}
-                                    onChange={(e) => setSortOrder(e.target.value)}
-                                >
-                                    <option value="newest">Recent</option>
-                                    <option value="oldest">Oldest</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto text-[13px]">
-                        <table className="w-full text-left border-collapse min-w-[700px]">
-                            <thead>
-                                <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="pl-6 py-4 w-10">
-                                        <input
-                                            type="checkbox"
-                                            checked={filteredContacts.length > 0 && selectedIds.length === filteredContacts.length}
-                                            onChange={toggleSelectAll}
-                                            className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                                        />
-                                    </th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Lead Name</th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Contact Info</th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Submitted At</th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Message Snippet</th>
-                                    <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px] text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-20 text-center">
-                                            <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mx-auto" />
-                                            <p className="mt-4 text-slate-400 font-medium">Fetching leads...</p>
-                                        </td>
-                                    </tr>
-                                ) : filteredContacts.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-20 text-center text-slate-400">
-                                            <Search className="w-10 h-10 opacity-10 mx-auto mb-4" />
-                                            <p className="font-medium">No results matching your query</p>
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredContacts.map((contact) => (
-                                        <tr key={contact._id} className={`group hover:bg-slate-50/80 transition-all ${selectedIds.includes(contact._id) ? 'bg-emerald-50/30' : ''}`}>
-                                            <td className="pl-6 py-4">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedIds.includes(contact._id)}
-                                                    onChange={() => toggleSelectOne(contact._id)}
-                                                    className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                                                        {contact.name.charAt(0)}
-                                                    </div>
-                                                    <span className="font-bold text-slate-700">{contact.name}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 font-medium text-slate-600">
-                                                <div className="flex items-center gap-2">
-                                                    <Phone className="w-3.5 h-3.5 text-slate-400" />
-                                                    {contact.phone || 'N/A'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-700 tracking-tight">{new Date(contact.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                                    <span className="text-[11px] text-slate-400 font-semibold">{new Date(contact.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-slate-500 line-clamp-1 max-w-[200px] italic">
-                                                    {contact.message}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={() => openModal(contact)}
-                                                    className="inline-flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 font-bold py-1.5 px-3 rounded-lg hover:bg-emerald-50 transition-all border border-transparent hover:border-emerald-100"
-                                                >
-                                                    <Eye className="w-4 h-4" />
-                                                    <span>View</span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                {activeSection === 'inquiries' && renderInquiries()}
+                {activeSection === 'investors' && renderInvestors()}
+                {activeSection === 'plans' && renderPlans()}
             </main>
 
             {/* View Details Modal */}
@@ -548,6 +708,84 @@ const AdminDashboard = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+            {/* Plan Creation Modal */}
+            {isPlanModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="bg-emerald-600 p-6 text-white flex justify-between items-center">
+                            <h3 className="text-xl font-bold">Create Investment Plan</h3>
+                            <button onClick={() => setIsPlanModalOpen(false)}><X className="w-6 h-6" /></button>
+                        </div>
+                        <form onSubmit={handleSavePlan} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Plan Name</label>
+                                <input
+                                    type="text" required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                    value={planForm.name}
+                                    onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
+                                    placeholder="e.g. Monthly Earning Plan"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Type</label>
+                                    <select
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.type}
+                                        onChange={(e) => setPlanForm({ ...planForm, type: e.target.value })}
+                                    >
+                                        <option value="daily">Daily</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Profit %</label>
+                                    <input
+                                        type="number" required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.profitPercentage}
+                                        onChange={(e) => setPlanForm({ ...planForm, profitPercentage: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Duration (Days)</label>
+                                    <input
+                                        type="number" required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.durationDays}
+                                        onChange={(e) => setPlanForm({ ...planForm, durationDays: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Min Amount</label>
+                                    <input
+                                        type="number" required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.minAmount}
+                                        onChange={(e) => setPlanForm({ ...planForm, minAmount: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Description</label>
+                                <textarea
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none h-20 resize-none"
+                                    value={planForm.description}
+                                    onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}
+                                    placeholder="Brief details about the plan..."
+                                />
+                            </div>
+                            <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all">
+                                Save Plan
+                            </button>
+                        </form>
                     </div>
                 </div>
             )}
