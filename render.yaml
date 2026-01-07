@@ -1,13 +1,15 @@
 # Render Blueprint
-# We use specific service tokens (webServices, staticSites) instead of the generic 'services' list.
+# Reverting to standard 'services' key.
+# Removing 'root'/'rootDir' to avoid validation errors, using 'cd' commands instead.
 
-webServices:
-  - name: moneygrow-api
+services:
+  - type: web
+    name: moneygrow-api
     runtime: node
     region: singapore
-    rootDir: server # Changed from 'root' to 'rootDir'
-    buildCommand: npm install
-    startCommand: node index.js
+    # root: server (Removed to avoid error, using cd below)
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
     plan: free
     envVars:
       - key: NODE_ENV
@@ -20,9 +22,9 @@ webServices:
 staticSites:
   - name: moneygrow-frontend
     region: singapore
-    rootDir: client # Changed from 'root' to 'rootDir'
-    buildCommand: npm install && npm run build
-    publishDir: dist
+    # root: client (Removed to avoid error, using cd below)
+    buildCommand: cd client && npm install && npm run build
+    publishDir: client/dist
     plan: free
     envVars:
       - key: VITE_API_URL
