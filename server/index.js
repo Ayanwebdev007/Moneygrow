@@ -12,9 +12,15 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/money-grow-bloom')
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('MongoDB connection error:', err));
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/money-grow-bloom';
+console.log('Attempting to connect to MongoDB...');
+
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Successfully connected to MongoDB'))
+    .catch(err => {
+        console.error('CRITICAL: MongoDB connection error:', err.message);
+        // Don't exit, but log clearly
+    });
 
 // API Routes
 const contactRoutes = require('./routes/contact');
@@ -33,11 +39,20 @@ if (process.env.NODE_ENV === 'production') {
             res.send('Money Grow Bloom API Running (Production)');
         });
     }
-} else {
     app.get('/', (req, res) => {
         res.send('Money Grow Bloom API Running');
     });
 }
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.json({
+        status: 'UP',
+        database: dbStatus,
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

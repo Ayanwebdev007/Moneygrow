@@ -20,10 +20,18 @@ export default function Contact() {
         setStatus('loading');
         try {
             let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+            // Cleanup URL: remove trailing slashes and common whitespace
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+
             if (!apiUrl.startsWith('http')) {
                 apiUrl = `https://${apiUrl}`;
             }
-            const response = await fetch(`${apiUrl}/api/contact`, {
+
+            const targetUrl = `${apiUrl}/api/contact`;
+            console.log('Submitting form to:', targetUrl);
+
+            const response = await fetch(targetUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
