@@ -1,17 +1,15 @@
-# Render Blueprint - Robust Configuration
-# We define BOTH separate services as "web" services to avoid schema validation errors with 'staticSites'.
-# This ensures guaranteed separate deployment.
+# Render Blueprint
+# This configuration defines two separate services and connects them.
 
 services:
-  # 1. Backend API Service
+  # 1. Backend Service (API)
   - type: web
     name: moneygrow-api
     runtime: node
     region: singapore
-    # Build: Go to server folder, install deps
-    buildCommand: cd server && npm install
-    # Start: Go to server folder, run server
-    startCommand: cd server && node index.js
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
     plan: free
     envVars:
       - key: NODE_ENV
@@ -21,15 +19,14 @@ services:
       - key: MONGODB_URI
         sync: false
 
-  # 2. Frontend web Service (Serving Static Files via Node)
+  # 2. Frontend Service (Web)
   - type: web
-    name: moneygrow-frontend-web
+    name: moneygrow-web
     runtime: node
     region: singapore
-    # Build: Go to client folder, install, build
-    buildCommand: cd client && npm install && npm run build
-    # Start: Go to client, serve the 'dist' folder on Port 10000
-    startCommand: cd client && npx serve -s dist -l 10000
+    rootDir: client
+    buildCommand: npm install && npm run build
+    startCommand: npx serve -s dist -l 10000
     plan: free
     envVars:
       - key: VITE_API_URL
