@@ -22,28 +22,6 @@ mongoose.connect(MONGODB_URI)
         // Don't exit, but log clearly
     });
 
-// API Routes
-const contactRoutes = require('./routes/contact');
-app.use('/api/contact', contactRoutes);
-
-// Serve static assets if in production (only if directory exists)
-if (process.env.NODE_ENV === 'production') {
-    const distPath = path.join(__dirname, '../client/dist');
-    if (require('fs').existsSync(distPath)) {
-        app.use(express.static(distPath));
-        app.get('(.*)', (req, res) => {
-            res.sendFile(path.resolve(distPath, 'index.html'));
-        });
-    } else {
-        app.get('/', (req, res) => {
-            res.send('Money Grow Bloom API Running (Production)');
-        });
-    }
-    app.get('/', (req, res) => {
-        res.send('Money Grow Bloom API Running');
-    });
-}
-
 // Health check endpoint
 app.get('/health', (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
@@ -53,6 +31,26 @@ app.get('/health', (req, res) => {
         environment: process.env.NODE_ENV || 'development'
     });
 });
+
+// API Routes
+const contactRoutes = require('./routes/contact');
+app.use('/api/contact', contactRoutes);
+
+// Base API route
+app.get('/', (req, res) => {
+    res.send('Money Grow Bloom API Running');
+});
+
+// Serve static assets if in production (only if directory exists)
+if (process.env.NODE_ENV === 'production') {
+    const distPath = path.join(__dirname, '../client/dist');
+    if (require('fs').existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get('(.*)', (req, res) => {
+            res.sendFile(path.resolve(distPath, 'index.html'));
+        });
+    }
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
