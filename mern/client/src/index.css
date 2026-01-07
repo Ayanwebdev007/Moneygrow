@@ -1,0 +1,338 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Money Grow Design System - Financial Trust Theme */
+
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary: Deep Emerald Green - Growth & Prosperity */
+    --primary: 152 60% 28%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Navy Blue - Trust & Stability */
+    --secondary: 215 50% 23%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted: Soft Gray */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 45%;
+
+    /* Accent: Gold - Premium & Value */
+    --accent: 43 74% 49%;
+    --accent-foreground: 215 25% 15%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 152 60% 28%;
+
+    --radius: 0.625rem;
+
+    /* Custom Brand Extensions */
+    --gold: 43 74% 49%;
+    --gold-light: 43 74% 65%;
+    --gold-dark: 43 74% 38%;
+
+    --emerald: 152 60% 28%;
+    --emerald-light: 152 45% 45%;
+    --emerald-dark: 152 65% 20%;
+
+    --navy: 215 50% 23%;
+    --navy-light: 215 40% 35%;
+
+    /* Gradient definitions */
+    --gradient-hero: linear-gradient(135deg, hsl(152 60% 28%) 0%, hsl(215 50% 23%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(43 74% 38%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 15% / 0.1), 0 2px 4px -2px hsl(215 25% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 15% / 0.1), 0 4px 6px -4px hsl(215 25% 15% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(215 25% 15% / 0.1), 0 8px 10px -6px hsl(215 25% 15% / 0.1);
+    --shadow-gold: 0 4px 14px 0 hsl(43 74% 49% / 0.3);
+    --shadow-emerald: 0 4px 14px 0 hsl(152 60% 28% / 0.25);
+  }
+
+  .dark {
+    --background: 215 30% 6%;
+    /* Deepening the dark background */
+    --foreground: 0 0% 98%;
+    /* Near white for max contrast */
+
+    --card: 215 30% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 215 30% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 152 60% 40%;
+    /* Brighter primary for dark mode contrast */
+    --primary-foreground: 215 30% 6%;
+
+    --secondary: 215 40% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 215 25% 15%;
+    --muted-foreground: 215 20% 70%;
+    /* Lighter for readability on dark */
+
+    --accent: 43 74% 50%;
+    --accent-foreground: 215 30% 6%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 25% 25%;
+    --input: 215 25% 25%;
+    --ring: 152 60% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans overflow-x-hidden antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Outfit', sans-serif;
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(43 74% 65%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Branded Background Tints */
+  .bg-emerald-tint {
+    background-color: hsl(152 60% 98%);
+  }
+
+  .dark .bg-emerald-tint {
+    background-color: hsl(152 60% 5% / 0.3);
+  }
+
+  .bg-navy-tint {
+    background-color: hsl(215 50% 98%);
+  }
+
+  .dark .bg-navy-tint {
+    background-color: hsl(215 50% 5% / 0.3);
+  }
+
+  .bg-gold-tint {
+    background-color: hsl(43 74% 98%);
+  }
+
+  .dark .bg-gold-tint {
+    background-color: hsl(43 74% 5% / 0.3);
+  }
+
+  /* Mesh Gradients */
+  .mesh-gradient-emerald {
+    background-color: hsl(152 60% 98%);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(152, 60%, 28%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(43, 74%, 49%, 0.05) 0px, transparent 50%);
+  }
+
+  .mesh-gradient-gold {
+    background-color: hsl(43 74% 98%);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(43, 74%, 49%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(152, 60%, 28%, 0.05) 0px, transparent 50%);
+  }
+
+  .mesh-gradient-navy {
+    background-color: hsl(215 50% 98%);
+    background-image:
+      radial-gradient(at 0% 100%, hsla(215, 50%, 23%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(152, 60%, 28%, 0.05) 0px, transparent 50%);
+  }
+
+  .shadow-card {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-gold {
+    box-shadow: 0 20px 40px -15px hsla(43, 74%, 49%, 0.3);
+  }
+
+  .shadow-emerald {
+    box-shadow: 0 20px 40px -15px hsla(152, 60%, 28%, 0.3);
+  }
+
+  /* Card Hover Effect */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Button Glow Effect */
+  .btn-glow {
+    @apply relative overflow-hidden;
+  }
+
+  .btn-glow::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.2) 0%, transparent 50%);
+  }
+
+  .btn-glow:hover::before {
+    @apply opacity-100;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+  }
+
+  .reveal-on-scroll.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
