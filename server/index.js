@@ -20,14 +20,19 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/money-gro
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
 
-// Serve static assets if in production
+// Serve static assets if in production (only if directory exists)
 if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'));
-    });
+    const distPath = path.join(__dirname, '../client/dist');
+    if (require('fs').existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get('(.*)', (req, res) => {
+            res.sendFile(path.resolve(distPath, 'index.html'));
+        });
+    } else {
+        app.get('/', (req, res) => {
+            res.send('Money Grow Bloom API Running (Production)');
+        });
+    }
 } else {
     app.get('/', (req, res) => {
         res.send('Money Grow Bloom API Running');
