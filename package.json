@@ -1,0 +1,20 @@
+{
+  "name": "money-grow-bloom",
+  "version": "1.0.0",
+  "description": "Money Grow Bloom MERN Stack Application",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "install-server": "cd server && npm install",
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
+    "build": "npm run install-server && npm run install-client && npm run build-client"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "Ayanwebdev007",
+  "license": "ISC"
+}
