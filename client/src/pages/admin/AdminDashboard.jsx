@@ -29,6 +29,8 @@ const AdminDashboard = () => {
     const [selectedContact, setSelectedContact] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState('newest');
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
 
     const fetchContacts = async () => {
@@ -132,6 +134,52 @@ const AdminDashboard = () => {
         document.body.removeChild(link);
     };
 
+    const handleBulkDelete = async () => {
+        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} selected leads?`)) return;
+
+        setIsDeleting(true);
+        try {
+            const token = localStorage.getItem('adminToken');
+            let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            apiUrl = apiUrl.trim().replace(/\/+$/, "");
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) apiUrl = `${apiUrl}.onrender.com`;
+            if (!apiUrl.startsWith('http')) apiUrl = `https://${apiUrl}`;
+
+            const response = await fetch(`${apiUrl}/api/admin/contacts/bulk`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ids: selectedIds })
+            });
+
+            if (!response.ok) throw new Error('Failed to delete leads');
+
+            setSelectedIds([]);
+            fetchContacts();
+            alert('Leads deleted successfully');
+        } catch (err) {
+            alert(err.message);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === filteredContacts.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(filteredContacts.map(c => c._id));
+        }
+    };
+
+    const toggleSelectOne = (id) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
+
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
 
     return (
@@ -193,6 +241,16 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
+                        {selectedIds.length > 0 && (
+                            <button
+                                onClick={handleBulkDelete}
+                                disabled={isDeleting}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-md shadow-red-600/20 text-xs uppercase tracking-wider animate-in fade-in zoom-in-95 duration-200"
+                            >
+                                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                                <span>Delete Selected ({selectedIds.length})</span>
+                            </button>
+                        )}
                         <button
                             onClick={fetchContacts}
                             disabled={loading}
@@ -257,6 +315,14 @@ const AdminDashboard = () => {
                         <table className="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr className="bg-slate-50/50 border-b border-slate-100">
+                                    <th className="pl-6 py-4 w-10">
+                                        <input
+                                            type="checkbox"
+                                            checked={filteredContacts.length > 0 && selectedIds.length === filteredContacts.length}
+                                            onChange={toggleSelectAll}
+                                            className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                        />
+                                    </th>
                                     <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Lead Name</th>
                                     <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Contact Info</th>
                                     <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Submitted At</th>
@@ -281,7 +347,15 @@ const AdminDashboard = () => {
                                     </tr>
                                 ) : (
                                     filteredContacts.map((contact) => (
-                                        <tr key={contact._id} className="group hover:bg-slate-50/80 transition-all">
+                                        <tr key={contact._id} className={`group hover:bg-slate-50/80 transition-all ${selectedIds.includes(contact._id) ? 'bg-emerald-50/30' : ''}`}>
+                                            <td className="pl-6 py-4">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.includes(contact._id)}
+                                                    onChange={() => toggleSelectOne(contact._id)}
+                                                    className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                                />
+                                            </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-emerald-600 group-hover:text-white transition-all">
