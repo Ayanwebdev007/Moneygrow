@@ -1,14 +1,16 @@
-# Render Blueprint
-# Reverting to standard 'services' key.
-# Removing 'root'/'rootDir' to avoid validation errors, using 'cd' commands instead.
+# Render Blueprint - Robust Configuration
+# We define BOTH separate services as "web" services to avoid schema validation errors with 'staticSites'.
+# This ensures guaranteed separate deployment.
 
 services:
+  # 1. Backend API Service
   - type: web
     name: moneygrow-api
     runtime: node
     region: singapore
-    # root: server (Removed to avoid error, using cd below)
+    # Build: Go to server folder, install deps
     buildCommand: cd server && npm install
+    # Start: Go to server folder, run server
     startCommand: cd server && node index.js
     plan: free
     envVars:
@@ -19,12 +21,15 @@ services:
       - key: MONGODB_URI
         sync: false
 
-staticSites:
-  - name: moneygrow-frontend
+  # 2. Frontend web Service (Serving Static Files via Node)
+  - type: web
+    name: moneygrow-frontend-web
+    runtime: node
     region: singapore
-    # root: client (Removed to avoid error, using cd below)
+    # Build: Go to client folder, install, build
     buildCommand: cd client && npm install && npm run build
-    publishDir: client/dist
+    # Start: Go to client, serve the 'dist' folder on Port 10000
+    startCommand: cd client && npx serve -s dist -l 10000
     plan: free
     envVars:
       - key: VITE_API_URL
