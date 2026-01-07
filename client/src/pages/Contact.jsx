@@ -24,6 +24,12 @@ export default function Contact() {
             // Cleanup URL: remove trailing slashes and common whitespace
             apiUrl = apiUrl.trim().replace(/\/+$/, "");
 
+            // Handle Render's internal service names or missing domains
+            // If it doesn't contain a dot (like 'moneygrow-api') and isn't localhost
+            if (!apiUrl.includes('.') && !apiUrl.includes('localhost')) {
+                apiUrl = `${apiUrl}.onrender.com`;
+            }
+
             if (!apiUrl.startsWith('http')) {
                 apiUrl = `https://${apiUrl}`;
             }
