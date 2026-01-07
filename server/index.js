@@ -43,10 +43,12 @@ app.get('/health', (req, res) => {
 const contactRoutes = require('./routes/contact');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const planRoutes = require('./routes/plans');
 
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/plans', planRoutes);
 
 // Base API route
 app.get('/', (req, res) => {
