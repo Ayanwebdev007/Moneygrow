@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 export default function Contact() {
     const [formData, setFormData] = useState({
         name: '',
-        email: '',
+        phone: '',
         subject: '',
         message: ''
     });
@@ -47,7 +47,7 @@ export default function Contact() {
 
             if (response.ok) {
                 setStatus('success');
-                setFormData({ name: '', email: '', subject: '', message: '' });
+                setFormData({ name: '', phone: '', subject: '', message: '' });
             } else {
                 setStatus('error');
             }
@@ -70,8 +70,8 @@ export default function Contact() {
                     {/* Contact Info Cards */}
                     <div className="space-y-6">
                         {[
-                            { label: 'Email', value: 'support@moneygrow.com', icon: <Mail className="w-5 h-5 text-primary" /> },
-                            { label: 'Phone', value: '+91 1800-123-4567', icon: <Phone className="w-5 h-5 text-primary" /> },
+                            { label: 'Customer Care', value: '+91 1800-123-4567', icon: <Phone className="w-5 h-5 text-emerald-600" /> },
+                            { label: 'WhatsApp', value: '+91 98765-43210', icon: <MessageSquare className="w-5 h-5 text-emerald-600" /> },
                             { label: 'Address', value: '123 Financial District, Mumbai, Maharashtra 400001, India', icon: <MapPin className="w-5 h-5 text-primary" /> },
                             { label: 'Hours', value: 'Monday - Saturday: 9:00 AM - 6:00 PM', icon: <Clock className="w-5 h-5 text-primary" /> },
                         ].map((item) => (
@@ -105,16 +105,16 @@ export default function Contact() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-medium">Email</label>
+                                    <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
                                     <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={formData.email}
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        value={formData.phone}
                                         onChange={handleChange}
-                                        placeholder="you@example.com"
+                                        placeholder="+91 00000-00000"
                                         required
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                                     />
                                 </div>
                             </div>
