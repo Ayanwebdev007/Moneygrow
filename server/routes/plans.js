@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Plan = require('../models/Plan');
-const { auth, admin } = require('../middleware/auth');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
 // @route   GET /api/plans
 // @desc    Get all active plans
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
 // @route   GET /api/plans/admin
 // @desc    Get all plans for admin (including inactive)
-router.get('/admin', auth, admin, async (req, res) => {
+router.get('/admin', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const plans = await Plan.find().sort({ createdAt: -1 });
         res.json(plans);
@@ -29,7 +29,7 @@ router.get('/admin', auth, admin, async (req, res) => {
 
 // @route   POST /api/plans
 // @desc    Create a new plan
-router.post('/', auth, admin, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const { name, type, profitPercentage, durationDays, minAmount, maxAmount, description } = req.body;
 
@@ -53,7 +53,7 @@ router.post('/', auth, admin, async (req, res) => {
 
 // @route   PUT /api/plans/:id
 // @desc    Update a plan
-router.put('/:id', auth, admin, async (req, res) => {
+router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const plan = await Plan.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!plan) return res.status(404).json({ error: 'Plan not found' });
@@ -66,7 +66,7 @@ router.put('/:id', auth, admin, async (req, res) => {
 
 // @route   DELETE /api/plans/:id
 // @desc    Delete a plan
-router.delete('/:id', auth, admin, async (req, res) => {
+router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const plan = await Plan.findByIdAndDelete(req.params.id);
         if (!plan) return res.status(404).json({ error: 'Plan not found' });
