@@ -94,6 +94,44 @@ const AdminDashboard = () => {
         setSelectedContact(null);
     };
 
+    const handleExportCSV = () => {
+        if (contacts.length === 0) return;
+
+        // Define Headers
+        const headers = ["Name", "Phone", "Email", "Subject", "Date", "Time", "Message"];
+
+        // Map Data to CSV Rows
+        const rows = filteredContacts.map(contact => {
+            const dateObj = new Date(contact.createdAt);
+            const date = dateObj.toLocaleDateString();
+            const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Escape commas and quotes for CSV safety
+            const escape = (text) => `"${(text || '').toString().replace(/"/g, '""')}"`;
+
+            return [
+                escape(contact.name),
+                escape(contact.phone),
+                escape(contact.email),
+                escape(contact.subject),
+                escape(date),
+                escape(time),
+                escape(contact.message)
+            ].join(",");
+        });
+
+        const csvContent = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `MoneyGrow_Leads_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
 
     return (
@@ -162,7 +200,11 @@ const AdminDashboard = () => {
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         </button>
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-md shadow-emerald-600/20 text-xs uppercase tracking-wider">
+                        <button
+                            onClick={handleExportCSV}
+                            disabled={loading || contacts.length === 0}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold transition-all shadow-md shadow-emerald-600/20 text-xs uppercase tracking-wider"
+                        >
                             <Download className="w-4 h-4" />
                             <span>Export Data</span>
                         </button>
