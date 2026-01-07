@@ -11,7 +11,7 @@ const plans = [
         tagline: 'Small Starts',
         growthRate: '18%',
         minAmount: '₹10',
-        period: 'per day',
+        period: '/ day',
         description: 'Save daily habits. Start with just ₹10.',
         features: ['Start with just ₹10/day', 'Daily contribution tracking', 'Up to 18% yearly growth', 'Digital passbook included', 'Perfect for daily earners'],
         color: 'from-emerald-500 to-green-600',
@@ -26,7 +26,7 @@ const plans = [
         tagline: 'Flexible',
         growthRate: '20%',
         minAmount: '₹300',
-        period: 'per month',
+        period: '/ month',
         description: 'Steady growth for salaried professionals.',
         features: ['Starting from ₹300/month', 'Monthly contribution cycle', 'Up to 20% yearly growth', 'Flexible payment dates', 'Best for salaried individuals'],
         color: 'from-blue-500 to-indigo-600',
@@ -42,9 +42,9 @@ const plans = [
         tagline: 'Faster Growth',
         growthRate: '25%',
         minAmount: '₹900',
-        period: 'per quarter',
+        period: '/ quarter',
         description: 'Higher impact with accelerated returns.',
-        features: ['Entry from ₹900/quarter', 'Quarterly contribution cycle', 'Up to 25% yearly growth', '4 easy payments per year', 'Higher growth opportunity'],
+        features: ['Entry from ₹900/quarter', 'Quarterly contribution cycle', 'Up to 25% yearly growth', '4 easy payments / year', 'Higher growth opportunity'],
         color: 'from-purple-500 to-violet-600',
         bgGradient: 'from-purple-50 to-violet-50 dark:from-purple-950/40 dark:to-violet-950/40',
         borderColor: 'border-purple-200 dark:border-purple-800',
@@ -57,9 +57,9 @@ const plans = [
         tagline: 'High Yield',
         growthRate: '28%',
         minAmount: '₹1,800',
-        period: 'per 6 months',
+        period: '/ 6 months',
         description: 'Strategic approach with premium benefits.',
-        features: ['Starting from ₹1,800/6 months', 'Semi-annual contribution', 'Up to 28% yearly growth', 'Only 2 payments per year', 'Premium growth benefits'],
+        features: ['Starting from ₹1,800/6 months', 'Semi-annual contribution', 'Up to 28% yearly growth', 'Only 2 payments / year', 'Premium growth benefits'],
         color: 'from-rose-500 to-pink-600',
         bgGradient: 'from-rose-50 to-pink-50 dark:from-rose-950/40 dark:to-pink-950/40',
         borderColor: 'border-rose-200 dark:border-rose-800',
@@ -72,7 +72,7 @@ const plans = [
         tagline: 'Top Growth',
         growthRate: '30%',
         minAmount: '₹3,600',
-        period: 'per year',
+        period: '/ year',
         description: 'Our premium plan for maximum potential.',
         features: ['Starting from ₹3,600/year', 'Single annual contribution', 'Up to 30% yearly growth', 'Highest growth potential', 'Long-term wealth building'],
         color: 'from-amber-500 to-orange-600',
@@ -292,7 +292,7 @@ export default function Plans() {
                                     <tr key={plan.id} className={cn("border-b border-border transition-colors", index % 2 === 0 ? "bg-background" : "bg-muted/20 hover:bg-muted/40")}>
                                         <td className="px-6 py-4 font-semibold text-foreground">{plan.name}</td>
                                         <td className="px-6 py-4 text-center font-bold text-foreground">{plan.minAmount}</td>
-                                        <td className="px-6 py-4 text-center text-muted-foreground capitalize">{plan.period.replace('per ', '')}</td>
+                                        <td className="px-6 py-4 text-center text-muted-foreground capitalize">{plan.period.replace('/ ', '')}</td>
                                         <td className="px-6 py-4 text-center">
                                             <span className={cn("inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r text-white font-bold text-sm", plan.color)}>
                                                 {plan.growthRate}
