@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, ArrowUpRight } from 'lucide-react';
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
@@ -47,55 +47,57 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans selection:bg-emerald-100">
             <div className="w-full max-w-md">
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl overflow-hidden relative group">
-                    {/* Background Glow */}
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
+                <div className="bg-white border border-slate-200 rounded-[32px] p-8 lg:p-10 shadow-xl shadow-slate-200/50 relative overflow-hidden">
+                    {/* Decorative Elements */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
                     <div className="relative">
-                        <div className="flex justify-center mb-8">
-                            <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
-                                <Lock className="w-8 h-8 text-blue-500" />
+                        <div className="flex justify-center mb-10">
+                            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-600/20">
+                                <ArrowUpRight className="w-9 h-9 text-white" />
                             </div>
                         </div>
 
-                        <h1 className="text-2xl font-bold text-white text-center mb-2">Admin Portal</h1>
-                        <p className="text-slate-400 text-center mb-8">Authorized personnel only</p>
+                        <div className="text-center mb-10">
+                            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Admin Portal</h1>
+                            <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest text-[10px]">Security Clearance Required</p>
+                        </div>
 
                         {error && (
-                            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400 text-sm animate-in fade-in slide-in-from-top-2">
+                            <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-3 text-red-600 text-sm animate-in fade-in slide-in-from-top-1">
                                 <AlertCircle className="w-5 h-5 shrink-0" />
-                                <span>{error}</span>
+                                <span className="font-bold">{error}</span>
                             </div>
                         )}
 
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest font-black text-slate-400 px-1">Email Identifier</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                                     <input
                                         type="email"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full bg-slate-950/50 border border-slate-800 text-white pl-11 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all outline-none"
+                                        className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-12 pr-4 py-3.5 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none font-medium placeholder:text-slate-300"
                                         placeholder="admin@moneygrow.com"
                                     />
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest font-black text-slate-400 px-1">Access Token</label>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                                     <input
                                         type="password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full bg-slate-950/50 border border-slate-800 text-white pl-11 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all outline-none"
+                                        className="w-full bg-slate-50 border border-slate-200 text-slate-900 pl-12 pr-4 py-3.5 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none font-medium placeholder:text-slate-300"
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -104,24 +106,27 @@ const AdminLogin = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+                                className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
                             >
                                 {loading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 animate-spin" />
-                                        <span>Logging in...</span>
+                                        <span>Authenticating...</span>
                                     </>
                                 ) : (
-                                    <span>Enter Dashboard</span>
+                                    <span>Establish Session</span>
                                 )}
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <p className="mt-8 text-center text-slate-500 text-xs">
-                    Protected by Money Grow Security Systems
-                </p>
+                <div className="mt-8 flex items-center justify-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                        Money Grow Management System v1.0
+                    </p>
+                </div>
             </div>
         </div>
     );
