@@ -17,7 +17,9 @@ import {
     Eye,
     ChevronRight,
     MessageCircle,
-    LayoutDashboard
+    LayoutDashboard,
+    ChevronLeft,
+    Menu
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,6 +33,7 @@ const AdminDashboard = () => {
     const [sortOrder, setSortOrder] = useState('newest');
     const [selectedIds, setSelectedIds] = useState([]);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const navigate = useNavigate();
 
     const fetchContacts = async () => {
@@ -185,50 +188,60 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100">
             {/* Sidebar */}
-            <aside className="fixed left-0 top-0 h-full w-20 lg:w-64 bg-white border-r border-slate-200 z-50 transition-all duration-300 shadow-sm">
-                <div className="p-4 lg:p-6 h-full flex flex-col">
+            <aside className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 shadow-sm ${isSidebarExpanded ? 'w-64' : 'w-20'}`}>
+                <div className="p-4 lg:p-6 h-full flex flex-col relative">
+                    {/* Toggle Button */}
+                    <button
+                        onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+                        className="absolute -right-3 top-20 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 shadow-sm z-[60] transition-transform hover:scale-110"
+                    >
+                        {isSidebarExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </button>
+
                     <div className="flex items-center gap-3 mb-10 overflow-hidden">
                         <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
                             <ArrowUpRight className="text-white w-6 h-6" />
                         </div>
-                        <span className="text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap hidden lg:block">Money Grow</span>
+                        {isSidebarExpanded && <span className="text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap animate-in fade-in slide-in-from-left-2">Money Grow</span>}
                     </div>
 
                     <nav className="space-y-1.5 flex-grow">
-                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-4 px-4 hidden lg:block">Main Menu</p>
-                        <button className="w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-2.5 bg-emerald-50 text-emerald-700 rounded-xl font-semibold transition-all group">
+                        {isSidebarExpanded && <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-4 px-4">Main Menu</p>}
+                        <button className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 bg-emerald-50 text-emerald-700 rounded-xl font-semibold transition-all group`}>
                             <Users className="w-5 h-5" />
-                            <span className="hidden lg:block">Inquiries</span>
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">Inquiries</span>}
                         </button>
-                        <button disabled className="w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-2.5 text-slate-400 rounded-xl font-medium cursor-not-allowed opacity-60">
+                        <button disabled className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 text-slate-400 rounded-xl font-medium cursor-not-allowed opacity-60`}>
                             <LayoutDashboard className="w-5 h-5" />
-                            <span className="hidden lg:block">App Users</span>
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">App Users</span>}
                         </button>
                     </nav>
 
                     <div className="mt-auto pt-6 border-t border-slate-100 space-y-4">
-                        <div className="flex items-center gap-3 px-2 hidden lg:flex">
-                            <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase">
-                                {adminUser.name?.charAt(0)}
+                        {isSidebarExpanded && (
+                            <div className="flex items-center gap-3 px-2 hidden lg:flex animate-in fade-in slide-in-from-bottom-2">
+                                <div className="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center font-bold text-xs uppercase">
+                                    {adminUser.name?.charAt(0)}
+                                </div>
+                                <div className="overflow-hidden">
+                                    <p className="text-xs font-bold text-slate-900 truncate">{adminUser.name}</p>
+                                    <p className="text-[10px] text-slate-400 font-medium">Administrator</p>
+                                </div>
                             </div>
-                            <div className="overflow-hidden">
-                                <p className="text-xs font-bold text-slate-900 truncate">{adminUser.name}</p>
-                                <p className="text-[10px] text-slate-400 font-medium">Administrator</p>
-                            </div>
-                        </div>
+                        )}
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-semibold transition-all group"
+                            className={`w-full flex items-center justify-center ${isSidebarExpanded ? 'lg:justify-start px-4' : ''} py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl font-semibold transition-all group`}
                         >
                             <LogOut className="w-5 h-5" />
-                            <span className="hidden lg:block">Logout</span>
+                            {isSidebarExpanded && <span className="ml-3 hidden lg:block animate-in fade-in slide-in-from-left-2">Logout</span>}
                         </button>
                     </div>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="ml-20 lg:ml-64 p-4 lg:p-8">
+            <main className={`p-4 lg:p-8 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-20'}`}>
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                     <div>
