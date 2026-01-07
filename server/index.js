@@ -14,12 +14,19 @@ app.use(express.json());
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/money-grow-bloom';
 console.log('Attempting to connect to MongoDB...');
+// Log a masked version for debugging
+console.log('URI Prefix:', MONGODB_URI.substring(0, 20) + '...');
 
 mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Successfully connected to MongoDB'))
+    .then(() => {
+        console.log('Successfully connected to MongoDB');
+        console.log('Main DB Name:', mongoose.connection.name);
+    })
     .catch(err => {
-        console.error('CRITICAL: MongoDB connection error:', err.message);
-        // Don't exit, but log clearly
+        console.error('CRITICAL: MongoDB connection failure details:');
+        console.error('Error Code:', err.code);
+        console.error('Error Name:', err.name);
+        console.error('Error Message:', err.message);
     });
 
 // Health check endpoint
