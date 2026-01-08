@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: ['https://money-grow-bloom.onrender.com', 'http://localhost:8081'],
+    origin: [
+        'https://moneygrow-api-wnvk.onrender.com',
+        'https://moneygrow-web-wnvk.onrender.com',
+        'http://localhost:8081'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));

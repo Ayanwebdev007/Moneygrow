@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService {
   // Replace with your actual Render backend URL
   // Points to production backend on Render
-  final String baseUrl = 'https://money-grow-bloom.onrender.com/api'; 
+  final String baseUrl = 'https://moneygrow-api-wnvk.onrender.com/api'; 
   final _storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> login(String phone, String password) async {
