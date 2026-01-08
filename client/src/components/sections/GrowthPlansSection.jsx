@@ -18,6 +18,8 @@ const plans = [
         bgGradient: 'from-emerald-50 to-green-50 dark:from-emerald-950/40 dark:to-green-950/40',
         borderColor: 'border-emerald-200 dark:border-emerald-800',
         accentColor: 'text-emerald-600 dark:text-emerald-400',
+        lockInPeriod: '0 Days',
+        payoutFrequency: 'Daily',
         image: '/images/daily-plan-person.png',
     },
     {
@@ -33,6 +35,8 @@ const plans = [
         bgGradient: 'from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40',
         borderColor: 'border-blue-200 dark:border-blue-800',
         accentColor: 'text-blue-600 dark:text-blue-400',
+        lockInPeriod: '30 Days',
+        payoutFrequency: 'Monthly',
         image: '/images/monthly-plan-person.png',
         popular: true,
     },
@@ -49,6 +53,8 @@ const plans = [
         bgGradient: 'from-purple-50 to-violet-50 dark:from-purple-950/40 dark:to-violet-950/40',
         borderColor: 'border-purple-200 dark:border-purple-800',
         accentColor: 'text-purple-600 dark:text-purple-400',
+        lockInPeriod: '90 Days',
+        payoutFrequency: 'Every 3 Months',
         image: '/images/quarterly-plan-person.png',
     },
     {
@@ -64,6 +70,8 @@ const plans = [
         bgGradient: 'from-rose-50 to-pink-50 dark:from-rose-950/40 dark:to-pink-950/40',
         borderColor: 'border-rose-200 dark:border-rose-800',
         accentColor: 'text-rose-600 dark:text-rose-400',
+        lockInPeriod: '180 Days',
+        payoutFrequency: 'Every 6 Months',
         image: '/images/halfyearly-plan-person.png',
     },
     {
@@ -79,6 +87,8 @@ const plans = [
         bgGradient: 'from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40',
         borderColor: 'border-amber-200 dark:border-amber-800',
         accentColor: 'text-amber-600 dark:text-amber-400',
+        lockInPeriod: '365 Days',
+        payoutFrequency: 'Yearly',
         image: '/images/yearly-plan-person.png',
         premium: true,
     },
@@ -163,65 +173,76 @@ export default function GrowthPlansSection() {
 
                                         {/* Content Section */}
                                         <div className="lg:w-3/5 p-6 lg:p-10">
-                                            <div className="space-y-5">
-                                                {/* Header */}
-                                                <div>
-                                                    <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">
-                                                        {plan.name}
-                                                    </h3>
-                                                    <p className={cn("text-lg font-bold", plan.accentColor)}>
-                                                        {plan.tagline}
+                                            <div className="space-y-4">
+                                                <div className="flex flex-wrap gap-4">
+                                                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10">
+                                                        <span className="text-[10px] font-bold text-slate-500 uppercase">Lock-in</span>
+                                                        <span className="text-sm font-bold text-slate-900 dark:text-emerald-100">{plan.lockInPeriod}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10">
+                                                        <span className="text-[10px] font-bold text-slate-500 uppercase">Payout</span>
+                                                        <span className="text-sm font-bold text-slate-900 dark:text-emerald-100">{plan.payoutFrequency}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-5">
+                                                    {/* Header */}
+                                                    <div>
+                                                        <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">
+                                                            {plan.name}
+                                                        </h3>
+                                                        <p className={cn("text-lg font-bold", plan.accentColor)}>
+                                                            {plan.tagline}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Price */}
+                                                    <div className="flex items-baseline gap-2">
+                                                        <span className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">{plan.minAmount}</span>
+                                                        <span className="text-xl text-slate-600 dark:text-emerald-100/60 transition-colors">{plan.period}</span>
+                                                    </div>
+
+                                                    {/* Description */}
+                                                    <p className="text-slate-700 dark:text-emerald-100/80 text-lg leading-relaxed">
+                                                        {plan.description}
                                                     </p>
-                                                </div>
 
-                                                {/* Price */}
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">{plan.minAmount}</span>
-                                                    <span className="text-xl text-slate-600 dark:text-emerald-100/60 transition-colors">{plan.period}</span>
-                                                </div>
+                                                    {/* Features */}
+                                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {plan.features.map((feature) => (
+                                                            <li key={feature} className="flex items-center gap-3 group/item">
+                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
+                                                                    <CheckCircle className={cn("w-3 h-3", plan.accentColor)} strokeWidth={2.5} />
+                                                                </div>
+                                                                <span className="text-slate-800 dark:text-emerald-50 font-medium">{feature}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
 
-                                                {/* Description */}
-                                                <p className="text-slate-700 dark:text-emerald-100/80 text-lg leading-relaxed">
-                                                    {plan.description}
-                                                </p>
-
-                                                {/* Features */}
-                                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {plan.features.map((feature) => (
-                                                        <li key={feature} className="flex items-center gap-3 group/item">
-                                                            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
-                                                                <CheckCircle className={cn("w-3 h-3", plan.accentColor)} strokeWidth={2.5} />
-                                                            </div>
-                                                            <span className="text-slate-800 dark:text-emerald-50 font-medium">{feature}</span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-
-                                                {/* CTA Buttons */}
-                                                <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                                                    <a href="https://play.google.com/store/apps?hl=en_IN" target="_blank" rel="noopener noreferrer">
-                                                        <Button size="lg" className={cn("gap-2 font-semibold px-8 bg-gradient-to-r hover:opacity-90 text-white w-full sm:w-auto", plan.color)}>
-                                                            Get Started
-                                                            <ArrowRight className="w-5 h-5" />
-                                                        </Button>
-                                                    </a>
-                                                    <Link to="/plans">
-                                                        <Button size="lg" variant="outline" className="gap-2 font-semibold w-full sm:w-auto">
-                                                            Learn More
-                                                        </Button>
-                                                    </Link>
+                                                    {/* CTA Buttons */}
+                                                    <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                                                        <a href="https://play.google.com/store/apps?hl=en_IN" target="_blank" rel="noopener noreferrer">
+                                                            <Button size="lg" className={cn("gap-2 font-semibold px-8 bg-gradient-to-r hover:opacity-90 text-white w-full sm:w-auto", plan.color)}>
+                                                                Get Started
+                                                                <ArrowRight className="w-5 h-5" />
+                                                            </Button>
+                                                        </a>
+                                                        <Link to="/plans">
+                                                            <Button size="lg" variant="outline" className="gap-2 font-semibold w-full sm:w-auto">
+                                                                Learn More
+                                                            </Button>
+                                                        </Link>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         ))}
-                    </div>
+                            </div>
 
-                    {/* Custom Navigation Arrows */}
-                    <button
-                        onClick={() => scroll(-1)}
+                    {/* Custom Navigation Arrows */ }
+                            < button
+                        onClick = {() => scroll(-1)}
                         className="absolute left-0 lg:-left-8 top-1/2 -translate-y-1/2 h-12 w-12 lg:h-14 lg:w-14 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 border-0 shadow-xl flex items-center justify-center transition-transform hover:scale-105"
                         aria-label="Previous slide"
                     >

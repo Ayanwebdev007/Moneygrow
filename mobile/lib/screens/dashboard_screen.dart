@@ -158,13 +158,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                   const Text('LOCK-IN', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
+                   Text(plan['lockInPeriod'] ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('DURATION', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
-                  Text('${plan['durationDays']} Days', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('PAYOUT', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
+                  Text(plan['payoutFrequency'] ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    plan['riskDisclaimer'] ?? 'Standard market risks apply.',
+                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

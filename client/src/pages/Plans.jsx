@@ -18,6 +18,9 @@ const plans = [
         bgGradient: 'from-emerald-50 to-green-50 dark:from-emerald-950/40 dark:to-green-950/40',
         borderColor: 'border-emerald-200 dark:border-emerald-800',
         accentColor: 'text-emerald-600 dark:text-emerald-400',
+        lockInPeriod: '0 Days',
+        payoutFrequency: 'Daily',
+        riskDisclaimer: 'High volatility. Capital at risk.',
         image: '/images/daily-plan-person.png',
     },
     {
@@ -33,6 +36,9 @@ const plans = [
         bgGradient: 'from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40',
         borderColor: 'border-blue-200 dark:border-blue-800',
         accentColor: 'text-blue-600 dark:text-blue-400',
+        lockInPeriod: '30 Days',
+        payoutFrequency: 'Monthly',
+        riskDisclaimer: 'Stable returns with moderate market risk.',
         image: '/images/monthly-plan-person.png',
         popular: true,
     },
@@ -49,6 +55,9 @@ const plans = [
         bgGradient: 'from-purple-50 to-violet-50 dark:from-purple-950/40 dark:to-violet-950/40',
         borderColor: 'border-purple-200 dark:border-purple-800',
         accentColor: 'text-purple-600 dark:text-purple-400',
+        lockInPeriod: '90 Days',
+        payoutFrequency: 'Every 3 Months',
+        riskDisclaimer: 'Balanced growth. Subject to market fluctuations.',
         image: '/images/quarterly-plan-person.png',
     },
     {
@@ -64,6 +73,9 @@ const plans = [
         bgGradient: 'from-rose-50 to-pink-50 dark:from-rose-950/40 dark:to-pink-950/40',
         borderColor: 'border-rose-200 dark:border-rose-800',
         accentColor: 'text-rose-600 dark:text-rose-400',
+        lockInPeriod: '180 Days',
+        payoutFrequency: 'Every 6 Months',
+        riskDisclaimer: 'Long-term investment with moderate risk.',
         image: '/images/halfyearly-plan-person.png',
     },
     {
@@ -79,6 +91,9 @@ const plans = [
         bgGradient: 'from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40',
         borderColor: 'border-amber-200 dark:border-amber-800',
         accentColor: 'text-amber-600 dark:text-amber-400',
+        lockInPeriod: '365 Days',
+        payoutFrequency: 'Yearly',
+        riskDisclaimer: 'Low risk. Assured returns.',
         image: '/images/yearly-plan-person.png',
         premium: true,
     },
@@ -283,8 +298,9 @@ export default function Plans() {
                                     <th className="px-6 py-4 text-left font-semibold">Plan</th>
                                     <th className="px-6 py-4 text-center font-semibold">Min. Amount</th>
                                     <th className="px-6 py-4 text-center font-semibold">Frequency</th>
+                                    <th className="px-6 py-4 text-center font-semibold">Lock-in</th>
                                     <th className="px-6 py-4 text-center font-semibold">Growth Rate</th>
-                                    <th className="px-6 py-4 text-center font-semibold">Best For</th>
+                                    <th className="px-6 py-4 text-center font-semibold">Risk Level</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -292,13 +308,14 @@ export default function Plans() {
                                     <tr key={plan.id} className={cn("border-b border-border transition-colors", index % 2 === 0 ? "bg-background" : "bg-muted/20 hover:bg-muted/40")}>
                                         <td className="px-6 py-4 font-semibold text-foreground">{plan.name}</td>
                                         <td className="px-6 py-4 text-center font-bold text-foreground">{plan.minAmount}</td>
-                                        <td className="px-6 py-4 text-center text-muted-foreground capitalize">{plan.period.replace('/ ', '')}</td>
+                                        <td className="px-6 py-4 text-center text-muted-foreground capitalize">{plan.payoutFrequency}</td>
+                                        <td className="px-6 py-4 text-center text-muted-foreground">{plan.lockInPeriod}</td>
                                         <td className="px-6 py-4 text-center">
                                             <span className={cn("inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r text-white font-bold text-sm", plan.color)}>
                                                 {plan.growthRate}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-center text-muted-foreground text-sm">{plan.features[4]}</td>
+                                        <td className="px-6 py-4 text-center text-muted-foreground text-xs">{plan.riskDisclaimer}</td>
                                     </tr>
                                 ))}
                             </tbody>

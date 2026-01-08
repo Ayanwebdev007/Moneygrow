@@ -30,6 +30,18 @@ const planSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    lockInPeriod: {
+        type: String,
+        required: true
+    },
+    payoutFrequency: {
+        type: String,
+        required: true
+    },
+    riskDisclaimer: {
+        type: String,
+        default: 'Investment in this plan is subject to market risks. Please read documents carefully.'
+    },
     isActive: {
         type: Boolean,
         default: true
