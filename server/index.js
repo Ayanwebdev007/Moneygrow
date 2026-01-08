@@ -81,7 +81,7 @@ app.get('/', (req, res) => {
 // Serve Mobile Web App (Flutter)
 const mobilePath = path.join(__dirname, 'public/mobile');
 app.use('/mobile', express.static(mobilePath));
-app.get('/mobile/:any*', (req, res) => {
+app.get(/^\/mobile($|\/.*)/, (req, res) => {
     res.sendFile(path.resolve(mobilePath, 'index.html'));
 });
 
@@ -90,7 +90,7 @@ if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(__dirname, '../client/dist');
     if (require('fs').existsSync(distPath)) {
         app.use(express.static(distPath));
-        app.get('/:any*', (req, res) => {
+        app.get(/^(?!\/api).*/, (req, res) => {
             res.sendFile(path.resolve(distPath, 'index.html'));
         });
     }
