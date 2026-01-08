@@ -81,7 +81,7 @@ app.get('/', (req, res) => {
 // Serve Mobile Web App (Flutter)
 const mobilePath = path.join(__dirname, 'public/mobile');
 app.use('/mobile', express.static(mobilePath));
-app.get('/mobile/*', (req, res) => {
+app.get('/mobile/(.*)', (req, res) => {
     res.sendFile(path.resolve(mobilePath, 'index.html'));
 });
 
