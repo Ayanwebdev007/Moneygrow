@@ -23,10 +23,10 @@ io.on('connection', (socket) => {
 });
 
 app.use(cors({
-    origin: [
-        'https://moneygrow-api-wnvk.onrender.com',
-        'https://moneygrow-web-wnvk.onrender.com',
-        'http://localhost:8081'
+    'https://moneygrow-api-wnvk.onrender.com',
+    'https://moneygrow-web-wnvk.onrender.com',
+    'http://localhost:8081',
+    'http://localhost:8082'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
