@@ -26,6 +26,10 @@ const investorSchema = new mongoose.Schema({
         enum: ['not_started', 'pending', 'approved', 'rejected'],
         default: 'not_started'
     },
+    fullName: { type: String, trim: true },
+    panNumber: { type: String, trim: true },
+    aadhaarNumber: { type: String, trim: true },
+    dob: { type: String, trim: true },
     createdAt: {
         type: Date,
         default: Date.now

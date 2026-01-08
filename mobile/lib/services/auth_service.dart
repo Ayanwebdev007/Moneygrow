@@ -59,11 +59,49 @@ class AuthService {
     return await _storage.read(key: 'token');
   }
 
-  Future<Map<String, dynamic>?> getUser() async {
-    String? userStr = await _storage.read(key: 'user');
-    if (userStr != null) {
-      return json.decode(userStr);
+  Future<Map<String, dynamic>> getUser() async {
+    String? userData = await _storage.read(key: 'user');
+    if (userData != null) {
+      return json.decode(userData);
     }
-    return null;
+    return {};
+  }
+
+  Future<Map<String, dynamic>> fetchProfile() async {
+    String? token = await getToken();
+    final response = await http.get(
+      Uri.parse('$baseUrl/investor/profile'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      await _storage.write(key: 'user', value: json.encode(data));
+      return {'success': true, 'user': data};
+    }
+    return {'success': false, 'error': 'Failed to fetch profile'};
+  }
+
+  Future<Map<String, dynamic>> submitKYC(Map<String, String> kycData) async {
+    String? token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/investor/kyc'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(kycData),
+    );
+
+    final data = json.decode(response.body);
+    if (response.statusCode == 200) {
+      // Update stored user data with new KYC status
+      await _storage.write(key: 'user', value: json.encode(data['user']));
+      return {'success': true, 'message': data['message'], 'user': data['user']};
+    }
+    return {'success': false, 'error': data['error'] ?? 'KYC Submission failed'};
   }
 }

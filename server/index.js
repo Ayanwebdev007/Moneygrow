@@ -67,11 +67,13 @@ const contactRoutes = require('./routes/contact');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const planRoutes = require('./routes/plans');
+const investorRoutes = require('./routes/investors');
 
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/plans', planRoutes);
+app.use('/api/investor', investorRoutes);
 
 // Base API route
 app.get('/', (req, res) => {

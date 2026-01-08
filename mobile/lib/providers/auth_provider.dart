@@ -48,6 +48,14 @@ class AuthProvider with ChangeNotifier {
     return result;
   }
 
+  Future<void> refreshProfile() async {
+    final result = await _authService.fetchProfile();
+    if (result['success']) {
+      _user = result['user'];
+      notifyListeners();
+    }
+  }
+
   void logout() {
     _authService.logout();
     _user = null;

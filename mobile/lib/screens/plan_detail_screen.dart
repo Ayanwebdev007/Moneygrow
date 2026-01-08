@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import 'kyc_screen.dart';
 
-class PlanDetailScreen extends StatelessWidget {
+class PlanDetailScreen extends StatefulWidget {
   final dynamic plan;
 
   const PlanDetailScreen({super.key, required this.plan});
 
   @override
+  State<PlanDetailScreen> createState() => _PlanDetailScreenState();
+}
+
+class _PlanDetailScreenState extends State<PlanDetailScreen> {
+  @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthProvider>(context).user;
+    final kycStatus = user?['kycStatus'] ?? 'not_started';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(plan['name'], style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(widget.plan['name'], style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF0F172A),
@@ -70,7 +81,7 @@ class PlanDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          plan['type'].toString().toUpperCase(),
+                          widget.plan['type'].toString().toUpperCase(),
                           style: GoogleFonts.outfit(
                             color: const Color(0xFF047857),
                             fontSize: 12,
@@ -80,7 +91,7 @@ class PlanDetailScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${plan['profitPercentage']}% ROI',
+                        '${widget.plan['profitPercentage']}% ROI',
                         style: GoogleFonts.outfit(
                           fontSize: 24,
                           color: const Color(0xFF10B981),
@@ -99,10 +110,10 @@ class PlanDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildDetailRow(Icons.calendar_today_rounded, 'Duration', '${plan['durationDays']} Days'),
-                  _buildDetailRow(Icons.payments_rounded, 'Min Investment', '₹${plan['minAmount']}'),
-                  _buildDetailRow(Icons.lock_clock_rounded, 'Lock-in Period', plan['lockInPeriod'] ?? 'N/A'),
-                  _buildDetailRow(Icons.account_balance_rounded, 'Payout Frequency', plan['payoutFrequency'] ?? 'N/A'),
+                  _buildDetailRow(Icons.calendar_today_rounded, 'Duration', '${widget.plan['durationDays']} Days'),
+                  _buildDetailRow(Icons.payments_rounded, 'Min Investment', '₹${widget.plan['minAmount']}'),
+                  _buildDetailRow(Icons.lock_clock_rounded, 'Lock-in Period', widget.plan['lockInPeriod'] ?? 'N/A'),
+                  _buildDetailRow(Icons.account_balance_rounded, 'Payout Frequency', widget.plan['payoutFrequency'] ?? 'N/A'),
                   
                   const SizedBox(height: 32),
                   Text(
@@ -115,7 +126,7 @@ class PlanDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    plan['description'] ?? 'Exclusive investment plan designed for consistent growth and wealth preservation.',
+                    widget.plan['description'] ?? 'Exclusive investment plan designed for consistent growth and wealth preservation.',
                     style: GoogleFonts.outfit(
                       fontSize: 15,
                       color: const Color(0xFF64748B),
@@ -149,7 +160,7 @@ class PlanDetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          plan['riskDisclaimer'] ?? 'Investment in this plan is subject to market risks. Please read documents carefully before investing.',
+                          widget.plan['riskDisclaimer'] ?? 'Investment in this plan is subject to market risks. Please read documents carefully before investing.',
                           style: GoogleFonts.outfit(
                             color: const Color(0xFF64748B),
                             fontSize: 13,
@@ -165,13 +176,21 @@ class PlanDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 60,
                     child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Starting KYC Process...')),
-                        );
-                      },
+                      onPressed: kycStatus == 'approved' 
+                        ? () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan subscription coming soon!')))
+                        : () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const KYCScreen()),
+                            );
+                            if (result == true) {
+                              if (mounted) {
+                                Provider.of<AuthProvider>(context, listen: false).refreshProfile();
+                              }
+                            }
+                          },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
+                        backgroundColor: kycStatus == 'approved' ? const Color(0xFF0F172A) : const Color(0xFF10B981),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -179,7 +198,7 @@ class PlanDetailScreen extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'START KYC',
+                        kycStatus == 'approved' ? 'SUBSCRIBE NOW' : 'START KYC',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -188,6 +207,14 @@ class PlanDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  if (kycStatus == 'approved')
+                    Center(
+                      child: Text(
+                        'Verified Account ✅',
+                        style: GoogleFonts.outfit(color: const Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                    ),
                   const SizedBox(height: 40),
                 ],
               ),
