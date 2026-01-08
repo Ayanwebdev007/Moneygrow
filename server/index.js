@@ -23,10 +23,11 @@ io.on('connection', (socket) => {
 });
 
 app.use(cors({
-    'https://moneygrow-api-wnvk.onrender.com',
-    'https://moneygrow-web-wnvk.onrender.com',
-    'http://localhost:8081',
-    'http://localhost:8082'
+    origin: [
+        'https://moneygrow-api-wnvk.onrender.com',
+        'https://moneygrow-web-wnvk.onrender.com',
+        'http://localhost:8081',
+        'http://localhost:8082'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -76,6 +77,10 @@ app.use('/api/plans', planRoutes);
 app.get('/', (req, res) => {
     res.send('Money Grow Bloom API Running');
 });
+
+// Serve Mobile Web App (Flutter)
+const mobilePath = path.join(__dirname, 'public/mobile');
+app.use('/mobile', express.static(mobilePath));
 
 // Serve static assets if in production (only if directory exists)
 if (process.env.NODE_ENV === 'production') {
