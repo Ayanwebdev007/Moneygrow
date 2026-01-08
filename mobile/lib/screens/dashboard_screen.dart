@@ -51,8 +51,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   colors: [Color(0xFF10B981), Color(0xFF059669)],
                 ),
                 borderRadius: BorderRadius.circular(24),
-                shadowShadow: [
-                  BoxShadow(color: Colors.emerald.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFF10B981).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))
                 ],
               ),
               child: Column(
@@ -114,26 +114,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.slate.shade100),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
-          BoxShadow(color: Colors.slate.shade50, blurRadius: 10, offset: const Offset(0, 4))
+          BoxShadow(color: const Color(0xFFF8FAFC), blurRadius: 10, offset: const Offset(0, 4))
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.emerald.shade50,
+                  color: const Color(0xFFECFDF5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   plan['type'].toString().toUpperCase(),
-                  style: TextStyle(color: Colors.emerald.shade700, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xFF047857), fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
@@ -145,22 +145,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 12),
           Text(plan['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(plan['description'] ?? '', style: TextStyle(color: Colors.slate.shade500, fontSize: 13)),
+          Text(plan['description'] ?? '', style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('MIN AMOUNT', style: TextStyle(color: Colors.slate, fontSize: 10, fontWeight: FontWeight.bold)),
+                  const Text('MIN AMOUNT', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
                   Text('₹${plan['minAmount']}', style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('DURATION', style: TextStyle(color: Colors.slate, fontSize: 10, fontWeight: FontWeight.bold)),
+                  const Text('DURATION', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
                   Text('${plan['durationDays']} Days', style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),

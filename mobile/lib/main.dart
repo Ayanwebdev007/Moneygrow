@@ -11,9 +11,24 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
-      child: const MoneyGrowApp(),
+      child: const WebWrapper(child: MoneyGrowApp()),
     ),
   );
+}
+
+class WebWrapper extends StatelessWidget {
+  final Widget child;
+  const WebWrapper({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 450),
+        child: child,
+      ),
+    );
+  }
 }
 
 class MoneyGrowApp extends StatelessWidget {
@@ -81,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.emerald.shade50,
+              const Color(0xFFECFDF5),
               Colors.white,
             ],
           ),
@@ -113,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.slate.shade500,
+                    color: const Color(0xFF64748B),
                   ),
                 ),
                 const SizedBox(height: 48),
