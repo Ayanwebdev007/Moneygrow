@@ -27,13 +27,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _initSocket() {
-    _socket = IO.io('https://moneygrow-api-wnvk.onrender.com', 
-      IO.OptionBuilder()
-        .setTransports(['websocket'])
-        .disableAutoConnect()
-        .build()
-    );
-    
+    _socket = IO.io(
+        'https://moneygrow-api-wnvk.onrender.com',
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .build());
+
     _socket.connect();
 
     _socket.on('plans_updated', (_) {
@@ -61,37 +61,70 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 220,
+            expandedHeight: 240,
             floating: false,
             pinned: true,
             backgroundColor: const Color(0xFF10B981),
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF10B981), Color(0xFF059669)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    'https://images.unsplash.com/photo-1579621970795-87faff2f9050?auto=format&fit=crop&q=80&w=1000',
+                    fit: BoxFit.cover,
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Welcome back,',
-                        style: GoogleFonts.outfit(color: Colors.white.withOpacity(0.8), fontSize: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF10B981).withOpacity(0.8),
+                          const Color(0xFF059669).withOpacity(0.9),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
-                      Text(
-                        user?['name'] ?? 'Investor',
-                        style: GoogleFonts.outfit(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF59E0B),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'GOLD MEMBER',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Welcome back,',
+                          style: GoogleFonts.outfit(
+                              color: Colors.white.withOpacity(0.9), fontSize: 16),
+                        ),
+                        Text(
+                          user?['name']?.split(' ')[0] ?? 'Investor',
+                          style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             actions: [
@@ -117,7 +150,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
-                        BoxShadow(color: const Color(0xFF64748B).withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
+                        BoxShadow(
+                            color: const Color(0xFF64748B).withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10))
                       ],
                     ),
                     child: Column(
@@ -125,13 +161,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFF10B981)),
+                            const Icon(Icons.account_balance_wallet_outlined,
+                                color: Color(0xFF10B981)), // Keep Green
                             const SizedBox(width: 12),
-                            Text('Wallet Balance', style: GoogleFonts.outfit(color: const Color(0xFF64748B), fontSize: 14)),
+                            Text('Account Balance',
+                                style: GoogleFonts.outfit(
+                                    color: const Color(0xFF64748B),
+                                    fontSize: 14)),
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text('₹0.00', style: GoogleFonts.outfit(fontSize: 36, fontWeight: FontWeight.bold, color: const Color(0xFF0F172A))),
+                        Text('₹0.00',
+                            style: GoogleFonts.outfit(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF0F172A))),
                       ],
                     ),
                   ),
@@ -141,9 +185,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       Text(
                         'Explore Plans',
-                        style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF0F172A)),
+                        style: GoogleFonts.outfit(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF0F172A)),
                       ),
-                      const Icon(Icons.arrow_forward_rounded, color: Color(0xFF10B981)),
+                      const Icon(Icons.arrow_forward_rounded,
+                          color: Color(0xFFF59E0B)), // Yellow Arrow
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -153,9 +201,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Connection failed. Please refresh.', style: GoogleFonts.outfit()));
+                        return Center(
+                            child: Text('Connection failed. Please refresh.',
+                                style: GoogleFonts.outfit()));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text('No active investment plans.', style: GoogleFonts.outfit()));
+                        return Center(
+                            child: Text('No active investment plans.',
+                                style: GoogleFonts.outfit()));
                       }
 
                       return ListView.builder(
@@ -194,7 +246,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0xFFF1F5F9)),
           boxShadow: [
-            BoxShadow(color: const Color(0xFF64748B).withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 8))
+            BoxShadow(
+                color: const Color(0xFF64748B).withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 8))
           ],
         ),
         child: Row(
@@ -202,10 +257,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFECFDF5),
+                color: const Color(0xFFFEF3C7), // Light Yellow background
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.show_chart_rounded, color: Color(0xFF10B981), size: 30),
+              child: const Icon(Icons.insights_rounded,
+                  color: Color(0xFFD97706), size: 30), // Darker Yellow icon
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -214,12 +270,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   Text(
                     plan['name'],
-                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF0F172A)),
+                    style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF0F172A)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'High Yield ${plan['type']} Plan',
-                    style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFF64748B)),
+                    style: GoogleFonts.outfit(
+                        fontSize: 13, color: const Color(0xFF64748B)),
                   ),
                 ],
               ),
@@ -229,11 +289,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Text(
                   '${plan['profitPercentage']}%',
-                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF10B981)),
+                  style: GoogleFonts.outfit(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF10B981)), // ROI remains Green
                 ),
                 Text(
                   'ROI',
-                  style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF64748B)),
+                  style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF64748B)),
                 ),
               ],
             ),
