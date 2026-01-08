@@ -58,4 +58,12 @@ class AuthService {
   Future<String?> getToken() async {
     return await _storage.read(key: 'token');
   }
+
+  Future<Map<String, dynamic>?> getUser() async {
+    String? userStr = await _storage.read(key: 'user');
+    if (userStr != null) {
+      return json.decode(userStr);
+    }
+    return null;
+  }
 }

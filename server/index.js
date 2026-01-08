@@ -6,7 +6,21 @@ require('dotenv').config();
 const path = require('path');
 
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 const PORT = process.env.PORT || 5000;
+
+// Socket setup
+app.set('io', io);
+io.on('connection', (socket) => {
+    console.log('New client connected:', socket.id);
+    socket.on('disconnect', () => console.log('Client disconnected'));
+});
 
 app.use(cors({
     origin: [
@@ -74,6 +88,6 @@ if (process.env.NODE_ENV === 'production') {
     }
 }
 
-app.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

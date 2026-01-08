@@ -31,7 +31,7 @@ router.get('/admin', authMiddleware, adminMiddleware, async (req, res) => {
 // @desc    Create a new plan
 router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const { name, type, profitPercentage, durationDays, minAmount, maxAmount, description } = req.body;
+        const { name, type, profitPercentage, durationDays, minAmount, maxAmount, description, lockInPeriod, payoutFrequency, riskDisclaimer } = req.body;
 
         const newPlan = new Plan({
             name,
@@ -40,10 +40,17 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
             durationDays,
             minAmount,
             maxAmount,
-            description
+            description,
+            lockInPeriod,
+            payoutFrequency,
+            riskDisclaimer
         });
 
         await newPlan.save();
+
+        // Emit real-time update
+        req.app.get('io').emit('plans_updated');
+
         res.status(201).json(newPlan);
     } catch (error) {
         console.error('Create plan error:', error);
@@ -57,6 +64,10 @@ router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const plan = await Plan.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!plan) return res.status(404).json({ error: 'Plan not found' });
+
+        // Emit real-time update
+        req.app.get('io').emit('plans_updated');
+
         res.json(plan);
     } catch (error) {
         console.error('Update plan error:', error);
@@ -70,6 +81,10 @@ router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const plan = await Plan.findByIdAndDelete(req.params.id);
         if (!plan) return res.status(404).json({ error: 'Plan not found' });
+
+        // Emit real-time update
+        req.app.get('io').emit('plans_updated');
+
         res.json({ message: 'Plan deleted' });
     } catch (error) {
         console.error('Delete plan error:', error);

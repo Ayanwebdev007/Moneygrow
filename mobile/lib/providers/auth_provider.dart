@@ -10,6 +10,14 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _user != null;
 
+  Future<void> initialize() async {
+    _isLoading = true;
+    notifyListeners();
+    _user = await _authService.getUser();
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<Map<String, dynamic>> login(String phone, String password) async {
     _isLoading = true;
     notifyListeners();

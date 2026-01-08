@@ -46,7 +46,10 @@ const AdminDashboard = () => {
         profitPercentage: 0,
         durationDays: 30,
         minAmount: 1000,
-        description: ''
+        description: '',
+        lockInPeriod: '0 Days',
+        payoutFrequency: 'Daily',
+        riskDisclaimer: 'Investment in this plan is subject to market risks.'
     });
     const navigate = useNavigate();
 
@@ -248,7 +251,17 @@ const AdminDashboard = () => {
 
             setIsPlanModalOpen(false);
             fetchPlans();
-            setPlanForm({ name: '', type: 'monthly', profitPercentage: 0, durationDays: 30, minAmount: 1000, description: '' });
+            setPlanForm({
+                name: '',
+                type: 'monthly',
+                profitPercentage: 0,
+                durationDays: 30,
+                minAmount: 1000,
+                description: '',
+                lockInPeriod: '0 Days',
+                payoutFrequency: 'Daily',
+                riskDisclaimer: 'Investment in this plan is subject to market risks.'
+            });
             alert('Investment Plan created successfully');
         } catch (err) {
             alert(err.message);
@@ -782,14 +795,45 @@ const AdminDashboard = () => {
                                     placeholder="Brief details about the plan..."
                                 />
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Lock-in Period</label>
+                                    <input
+                                        type="text" required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.lockInPeriod}
+                                        onChange={(e) => setPlanForm({ ...planForm, lockInPeriod: e.target.value })}
+                                        placeholder="0 Days / 30 Days"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Payout Freq.</label>
+                                    <input
+                                        type="text" required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                        value={planForm.payoutFrequency}
+                                        onChange={(e) => setPlanForm({ ...planForm, payoutFrequency: e.target.value })}
+                                        placeholder="Daily / Monthly"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Risk Disclaimer</label>
+                                <input
+                                    type="text" required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none"
+                                    value={planForm.riskDisclaimer}
+                                    onChange={(e) => setPlanForm({ ...planForm, riskDisclaimer: e.target.value })}
+                                />
+                            </div>
                             <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all">
                                 Save Plan
                             </button>
                         </form>
                     </div>
-                </div>
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 

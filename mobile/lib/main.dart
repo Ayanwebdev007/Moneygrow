@@ -6,10 +6,13 @@ import './screens/dashboard_screen.dart';
 import './screens/register_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final authProvider = AuthProvider();
+  
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider.value(value: authProvider..initialize()),
       ],
       child: const WebWrapper(child: MoneyGrowApp()),
     ),
@@ -36,6 +39,8 @@ class MoneyGrowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
     return MaterialApp(
       title: 'MoneyGrow',
       debugShowCheckedModeBanner: false,
@@ -48,7 +53,7 @@ class MoneyGrowApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.outfitTextTheme(),
       ),
-      home: const LoginScreen(),
+      home: authProvider.isAuthenticated ? const DashboardScreen() : const LoginScreen(),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/plan_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,11 +15,40 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final _planService = PlanService();
   late Future<List<dynamic>> _plansFuture;
+  late IO.Socket _socket;
 
   @override
   void initState() {
     super.initState();
     _plansFuture = _planService.fetchPlans();
+    _initSocket();
+  }
+
+  void _initSocket() {
+    // Points to production backend on Render
+    _socket = IO.io('https://moneygrow-api-wnvk.onrender.com', 
+      IO.OptionBuilder()
+        .setTransports(['websocket'])
+        .disableAutoConnect()
+        .build()
+    );
+    
+    _socket.connect();
+
+    _socket.on('plans_updated', (_) {
+      if (mounted) {
+        setState(() {
+          _plansFuture = _planService.fetchPlans();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _socket.disconnect();
+    _socket.dispose();
+    super.dispose();
   }
 
   @override
